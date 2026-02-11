@@ -5,8 +5,8 @@
 
 [build.environment]
   NODE_ENV = "production"
-  # Ensures the build uses the specific version defined in package.json for stability
-  NPM_FLAGS = "--no-audit --no-fund"
+  # Ensures devDependencies are installed even in production mode to provide the Vite binary
+  NPM_FLAGS = "--include=dev --no-audit --no-fund"
 
 [[headers]]
   for = "/*"
