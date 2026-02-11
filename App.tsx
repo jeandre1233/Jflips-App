@@ -78,29 +78,29 @@ const staggerContainer = {
   show: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.04,
-      delayChildren: 0.05
+      staggerChildren: 0.05,
+      delayChildren: 0.1
     }
   }
 };
 
 const athleteItemVariants = {
-  hidden: { opacity: 0, x: -30 },
+  hidden: { opacity: 0, x: -40 },
   show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 25 } }
 };
 
 const classItemVariants = {
-  hidden: { opacity: 0, x: 30 },
+  hidden: { opacity: 0, x: 40 },
   show: { opacity: 1, x: 0, transition: { type: "spring", stiffness: 300, damping: 25 } }
 };
 
 const registerItemVariants = {
   hidden: { opacity: 0, scale: 0.8 },
-  show: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 400, damping: 20 } }
+  show: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 400, damping: 22 } }
 };
 
 const invoiceItemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 30 },
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } }
 };
 
@@ -297,11 +297,6 @@ const App: React.FC = () => {
     loadCloudData(true);
   };
 
-  // --- ADDED MISSING FUNCTION ---
-  /**
-   * Deletes a record from the history table in Supabase.
-   * @param id The ID of the history entry to remove.
-   */
   const removeHistoryEntry = async (id: string) => {
     if (!user) return;
     if (!window.confirm("Delete history record?")) return;
@@ -365,13 +360,13 @@ const App: React.FC = () => {
       </header>
 
       <main className="flex-1 px-6 pb-28 relative z-0 print:p-0 print:m-0 print:overflow-visible overflow-x-hidden min-h-[50vh]">
-        <AnimatePresence mode="popLayout" initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activeView}
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
             className="w-full"
           >
             {activeView === View.DASHBOARD && <DashboardView state={state} onEditSession={startEditSession} onRemoveSession={removeSession} />}
@@ -406,7 +401,7 @@ const App: React.FC = () => {
         </motion.button>
       )}
 
-      <nav className="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white dark:bg-[#1e293b] border-t border-slate-100 dark:border-slate-800 flex justify-around items-center py-2.5 px-2 z-30 print:hidden transition-colors duration-300">
+      <nav className="fixed bottom-0 left-0 right-0 max-md mx-auto bg-white dark:bg-[#1e293b] border-t border-slate-100 dark:border-slate-800 flex justify-around items-center py-2.5 px-2 z-30 print:hidden transition-colors duration-300">
         <NavButton active={activeView === View.DASHBOARD} icon={<LayoutDashboard size={20}/>} label="Home" onClick={() => handleViewChange(View.DASHBOARD)} />
         <NavButton active={activeView === View.REGISTER} icon={<ClipboardCheck size={20}/>} label="Reg" onClick={() => { setEditingSession(null); handleViewChange(View.REGISTER); }} />
         <NavButton active={activeView === View.HISTORY} icon={<History size={20}/>} label="History" onClick={() => handleViewChange(View.HISTORY)} />
@@ -493,7 +488,7 @@ const RegisterView: React.FC<{ state: AppState, onSave: (ct: string, sids: strin
 
       <div className="space-y-3">
         <label className="text-[10px] font-black text-[#94a3b8] uppercase px-1">Attendance {selectedClassId && `(${studentsToShow.length} Athletes)`}</label>
-        <AnimatePresence mode="popLayout" initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div key={selectedClassId || 'none'} variants={staggerContainer} initial="hidden" animate="show" className="space-y-2.5">
             {!selectedClassId ? <div className="bg-white dark:bg-slate-800/40 border border-dashed border-slate-200 rounded-[2rem] p-12 text-center"><p className="text-[10px] text-slate-400 font-black uppercase">Choose session</p></div> : studentsToShow.map(student => (
               <motion.button key={student.id} variants={registerItemVariants} whileTap={{ scale: 0.97 }} onClick={() => toggleStudent(student.id)} className={`w-full p-4 rounded-xl border flex items-center gap-3.5 transition-colors ${selectedStudents.includes(student.id) ? 'bg-[#eff6ff] dark:bg-blue-900/30 border-[#1e4da1] text-[#1e4da1] shadow-md' : 'bg-white dark:bg-slate-800 border-slate-100 dark:border-slate-700 text-[#1a1a1a] dark:text-slate-300'}`}>
@@ -507,7 +502,7 @@ const RegisterView: React.FC<{ state: AppState, onSave: (ct: string, sids: strin
         </AnimatePresence>
       </div>
 
-      <div className="fixed bottom-24 left-6 right-6 max-w-md mx-auto flex gap-4 z-40">
+      <div className="fixed bottom-24 left-6 right-6 max-md mx-auto flex gap-4 z-40">
         <motion.button whileTap={{ scale: 0.95 }} onClick={handleSave} className="flex-[4] bg-[#1e4da1] dark:bg-blue-600 text-white py-4.5 rounded-2xl font-black text-[11px] uppercase shadow-2xl">Confirm</motion.button>
         <motion.button whileTap={{ scale: 0.9 }} onClick={onCancel} className="flex-1 bg-white dark:bg-slate-800 border border-slate-100 dark:border-slate-700 text-[#94a3b8] p-4 rounded-2xl flex items-center justify-center shadow-lg"><X size={24}/></motion.button>
       </div>
@@ -563,7 +558,7 @@ const RosterView: React.FC<{ state: AppState, onUpdateProfile: (p: Profile) => v
         ))}
       </div>
       
-      <AnimatePresence mode="popLayout" initial={false}>
+      <AnimatePresence mode="wait" initial={false}>
         <motion.div key={activeTab} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.2 }}>
           {activeTab === 'profile' ? (
             <div className="space-y-4">
@@ -579,7 +574,7 @@ const RosterView: React.FC<{ state: AppState, onUpdateProfile: (p: Profile) => v
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="flex justify-between items-center"><h2 className="text-xl font-black text-[#1a1a1a] dark:text-slate-100 uppercase italic">{activeTab}</h2><motion.button whileTap={{ scale: 0.8 }} onClick={activeTab === 'students' ? onAddStudent : onAddClass} className="w-10 h-10 bg-[#1e4da1] dark:bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg"><Plus size={20} strokeWidth={3}/></motion.button></div>
+              <div className="flex justify-between items-center"><h2 className="text-xl font-black text-[#1a1a1a] dark:text-slate-100 uppercase italic">{activeTab === 'students' ? 'Athletes' : activeTab}</h2><motion.button whileTap={{ scale: 0.8 }} onClick={activeTab === 'students' ? onAddStudent : onAddClass} className="w-10 h-10 bg-[#1e4da1] dark:bg-blue-600 text-white rounded-xl flex items-center justify-center shadow-lg"><Plus size={20} strokeWidth={3}/></motion.button></div>
               {activeTab === 'students' && (
                 <div className="relative"><Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#94a3b8]" size={16} /><input type="text" placeholder="Search..." value={search} onChange={e => setSearch(e.target.value)} className="w-full bg-white dark:bg-slate-800 border-none rounded-xl py-3 pl-11 pr-4 text-xs font-bold shadow-sm outline-none dark:text-slate-200" /></div>
               )}

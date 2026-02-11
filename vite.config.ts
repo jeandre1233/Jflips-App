@@ -10,27 +10,19 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     emptyOutDir: true,
-    sourcemap: false, // Disabling sourcemaps significantly speeds up build time
-    minify: 'esbuild', // Uses the extremely fast esbuild minifier
-    chunkSizeWarningLimit: 1000,
+    sourcemap: false,
+    minify: 'esbuild',
     rollupOptions: {
       output: {
-        // Strategic code splitting: separates large dependencies into a vendor chunk
-        // This speeds up subsequent deployments and improves caching performance
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'framer-motion', 'lucide-react'],
-          supabase: ['@supabase/supabase-js'],
-          utils: ['html-to-image']
-        },
-        // Optimize asset naming for better CDN delivery
-        chunkFileNames: 'assets/js/[name]-[hash].js',
-        entryFileNames: 'assets/js/[name]-[hash].js',
-        assetFileNames: 'assets/[ext]/[name]-[hash].[ext]'
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react')) return 'vendor-react';
+            if (id.includes('framer-motion')) return 'vendor-motion';
+            if (id.includes('lucide-react')) return 'vendor-icons';
+            return 'vendor';
+          }
+        }
       }
     }
-  },
-  // Optimize dependency pre-bundling for faster cold starts
-  optimizeDeps: {
-    include: ['react', 'react-dom', 'framer-motion', 'lucide-react', '@supabase/supabase-js']
   }
 });
